@@ -77,7 +77,7 @@ function SlotMachine(slots, canvas){
             let currentSlot = this.slots[i];
             currentSlot.stopPosition = randomChoice(0,-677, 6);
             this.slotValues[(currentSlot.stopPosition / - 677)]++;
-            currentSlot.displacement = 100;
+            currentSlot.displacement = 150;
             currentSlot.stop = false;
         }
         this.stop = false;
@@ -95,9 +95,10 @@ function SlotMachine(slots, canvas){
     this.stopSlots = function(){
         var nextTimeout = 0;
         for(let i = 0; i < this.slots.length; i++){
-            nextTimeout += 500;
+            nextTimeout += 750;
             let currentSlot = this.slots[i];
             let currentSlotAudio = this.spinnersAudio[i];
+
             window.setTimeout(function() {currentSlot.stop = true; currentSlotAudio.pause();}, nextTimeout);
         }
     }
@@ -135,6 +136,9 @@ function randomChoice(start, interval, choices){
 }
 
 function handleWinner(winInt) {
+    let smallWinAudio = document.getElementById("smallwin");
+    smallWinAudio.play();
+    
     let audio = document.getElementById("music");
     audio.volume = .8;
     let song = document.getElementById("music-src");
@@ -203,8 +207,8 @@ function init(){
                     handleWinner(winner);
                 }
 
-            }, 1550);
-        }, 2000);
+            }, 2350);
+        }, 1900);
     });
 }
 
