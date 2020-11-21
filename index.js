@@ -104,30 +104,9 @@ function SlotMachine(slots, canvas){
     }
 
     this.calcWinner = function() {
-        // Girls in the image as indexes (* -677)
-        // Hibiki: 0
-        // Tsubasa: 1
-        // Chris: 2
-        // Maria: 3
-        // Shirabe: 4
-        // Kirika: 5
-        for (let i = 0; i < this.slotValues.length; i++) {
-            let currentSlotValue = this.slotValues[i];
-            if (currentSlotValue >= 2) {
-                this.slotValues = [0,0,0,0,0,0];
-                return i;
-            }
-        }
-
-        if (this.slotValues[0] && this.slotValues[1]&& this.slotValues[2]) {
-            return 6; // Glorious Break
-        }
-
-        this.slotValues = [0,0,0,0,0,0];
-        return -1;
+        
     }
 }
-
 
 function getRandomInt(min, max) {
       min = Math.ceil(min);
@@ -140,46 +119,124 @@ function randomChoice(start, interval, choices){
     return rand * interval;
 }
 
-function handleWinner(winInt) {
-    let smallWinAudio = document.getElementById("smallwin");
-    smallWinAudio.play();
-    
-    let audio = document.getElementById("music");
-    audio.volume = .8;
+function handleWinner(slotValues, winFunc) {
+    // Setup
     let song = document.getElementById("music-src");
-    
-    switch (winInt) {
-        case 0:
-            // Play Hibiki
-            song.setAttribute("src", "ogg/Seigi_wo_Shinjite,_Nigiri_Shimete.oga");
-            break;
-        case 1:
-            // Play Tsubasa
-            song.setAttribute("src", "ogg/Gekkō_no_Tsurugi.oga");
-            break;
-        case 2:
-            // Play Chris
-            song.setAttribute("src", "ogg/TRUST_HEART_(IGNITED_arrangement).oga");
-            break;
-        case 3:
-            // Play Maria
-            song.setAttribute("src", "ogg/Shirogane_no_Honō_-keep_the_faith-.ogg");
-            break;
-        case 4:
-            // Play Shirabe
-            song.setAttribute("src", "ogg/Melodious_Moonlight.oga");
-            break;
-        case 5:
-            // Play Kirika
-            song.setAttribute("src", "ogg/Mikansei_Ai_Mapputatsu!.ogg");
-            break;
-        case 6:
-            // RADIANT FORCE (Hibiki/Tsubasa/Chris)
-            song.setAttribute("src", "ogg/RADIANT_FORCE_off_intro.mp3");
-                break;
+    let holyChant = document.getElementById("holy-chant-src");
+
+
+    // Girls in the image as indexes (* -677)
+    // Hibiki: 0
+    // Tsubasa: 1
+    // Chris: 2
+    // Maria: 3
+    // Shirabe: 4
+    // Kirika: 5
+
+    // Handle all the solo songs
+    for (let i = 0; i < slotValues.length; i++) {
+        let currentSlotValue = slotValues[i];
+        if (currentSlotValue == 3) {
+            switch (i) {
+                case 0:
+                    // Play Hibiki
+                    song.setAttribute("src", "audio/songs/Seigi_wo_Shinjite,_Nigiri_Shimete.oga");
+                    holyChant.setAttribute("src", "audio/holy-chants/Gungnir_Holy_Chant_(Hibiki).oga");
+                    break;
+                case 1:
+                    // Play Tsubasa
+                    song.setAttribute("src", "audio/songs/Gekkō_no_Tsurugi.oga");
+                    holyChant.setAttribute("src", "audio/holy-chants/Ame_no_Habakiri_Holy_Chant.oga");
+                    break;
+                case 2:
+                    // Play Chris
+                    song.setAttribute("src", "audio/songs/TRUST_HEART_(IGNITED_arrangement).oga");
+                    holyChant.setAttribute("src", "audio/holy-chants/Ichaival_Holy_Chant.oga");
+                    break;
+                case 3:
+                    // Play Maria
+                    song.setAttribute("src", "audio/songs/Shirogane_no_Honō_-keep_the_faith-.ogg");
+                    holyChant.setAttribute("src", "audio/holy-chants/Airgetlam_Holy_Chant_(Maria).oga");
+                    break;
+                case 4:
+                    // Play Shirabe
+                    song.setAttribute("src", "audio/songs/Melodious_Moonlight.oga");
+                    holyChant.setAttribute("src", "audio/holy-chants/Shul_Shagana_Holy_Chant.oga");
+                    break;
+                case 5:
+                    // Play Kirika
+                    song.setAttribute("src", "audio/songs/Mikansei_Ai_Mapputatsu!.ogg");
+                    holyChant.setAttribute("src", "audio/holy-chants/Igalima_Holy_Chant.oga");
+                    break;
+            }
+
+            let audio = document.getElementById("holy-chant");
+            audio.volume = .8;
+            audio.load();
+            audio.play();
+
+            window.setTimeout(winFunc, 10000)
+            return true;
+        }
     }
-    audio.load();
-    audio.play();
+
+    // Tsubasa Duets
+    if (slotValues[1]) {
+        let xValue = slotValues[1];
+        if (slotValues[2] + xValue == 3) {
+            // Tsubasa and Chris
+            song.setAttribute("src", "audio/songs/BAYONET_CHARGE.oga");
+            winFunc();
+            return true;
+        } else if (slotValues[4] + xValue == 3) {
+            // Tsubasa and Shirabe
+            song.setAttribute("src", "audio/songs/Fūgetsu_no_Shissō.oga");
+            winFunc();
+            return true;
+        } else if (slotValues[3] + xValue == 3) {
+            // Tsubasa and Maria
+            song.setAttribute("src", "audio/songs/Fushichou_no_Flamme.oga");
+            winFunc();
+            return true;
+        }
+    }
+
+    // Chris Duets that don't include Tsuasa
+    if (slotValues[2]) {
+        let xValue = slotValues[2];
+        if (slotValues[3] + xValue == 3) {
+            // Chris and Maria
+            song.setAttribute("src", "audio/songs/Change_the_Future.oga");
+            winFunc();
+            return true;
+        }
+    }
+
+    // Shirabe Duets without Chris or Tsubasa
+    if (slotValues[4]) {
+        let xValue = slotValues[4];
+        if (slotValues[5] + xValue == 3) {
+            // Shirabe and Kirika
+            song.setAttribute("src", "audio/songs/Cutting-Edge×2-Ready-go.ogg");
+            winFunc();
+            return true;
+        }
+    }
+
+    // Truets? Songs with 3 symphogears
+    if (slotValues[0] && slotValues[1]&& slotValues[2]) {
+        song.setAttribute("src", "audio/songs/RADIANT_FORCE_off_intro.mp3");
+            winFunc();
+            return true;
+    }
+
+    if (slotValues[3] && slotValues[4]&& slotValues[5]) {
+        song.setAttribute("src", "audio/songs/Senritsu_Sorority.oga");
+            winFunc();
+            return true;
+    }
+
+    return false;
 }
 
 function init(){
@@ -211,10 +268,16 @@ function init(){
                 startButton.disabled = false;
                 slotMachine.stop = true;
 
-                let winner = slotMachine.calcWinner();
-                if (winner != -1) {
-                    handleWinner(winner);
-                }
+                handleWinner(slotMachine.slotValues, function() {
+                    let smallWinAudio = document.getElementById("smallwin");
+                    smallWinAudio.play();
+
+                    let audio = document.getElementById("music");
+                    audio.volume = .8;
+                    audio.load();
+                    audio.play();
+                })
+                slotMachine.slotValues = [0,0,0,0,0,0];
 
             }, 2350);
         }, 1900);
