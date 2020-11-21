@@ -51,6 +51,7 @@ function SlotMachine(slots, canvas){
     this.stop = false;
     this.canvasContext = this.canvas.getContext("2d");
     this.slotValues = [0,0,0,0,0,0];
+    this.spinnersAudio = [document.getElementById("spinner-1"), document.getElementById("spinner-2"), document.getElementById("spinner-3")];
     this.drawFirstFrame = function(){
         this.canvasContext.clearRect(0,0, this.canvas.width, this.canvas.height);
         for(let i = 0; i < this.slots.length; i++){
@@ -59,8 +60,18 @@ function SlotMachine(slots, canvas){
         }
     }
     this.startSlots = function(){
+        // Pause Music
         let audio = document.getElementById("music");
         audio.pause();
+
+        // Start spinner noises
+        var nextTimeout = 0;
+        this.spinnersAudio.forEach((spinnerAudio) => {
+            nextTimeout += 50;
+            spinnerAudio.volume = .8;
+            spinnerAudio.currentTime = 0;
+            window.setTimeout(function() {spinnerAudio.play();}, nextTimeout);
+        });
 
         for(let i = 0; i < this.slots.length; i++){
             let currentSlot = this.slots[i];
@@ -86,7 +97,8 @@ function SlotMachine(slots, canvas){
         for(let i = 0; i < this.slots.length; i++){
             nextTimeout += 500;
             let currentSlot = this.slots[i];
-            window.setTimeout(function() {currentSlot.stop = true;}, nextTimeout);
+            let currentSlotAudio = this.spinnersAudio[i];
+            window.setTimeout(function() {currentSlot.stop = true; currentSlotAudio.pause();}, nextTimeout);
         }
     }
     this.draw = function(){
@@ -99,7 +111,7 @@ function SlotMachine(slots, canvas){
     this.calcWinner = function() {
         for (let i = 0; i < this.slotValues.length; i++) {
             let currentSlotValue = this.slotValues[i];
-            if (currentSlotValue == 2) {
+            if (currentSlotValue >= 2) {
                 this.slotValues = [0,0,0,0,0,0];
                 return i;
             }
