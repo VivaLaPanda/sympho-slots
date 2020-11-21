@@ -1,10 +1,4 @@
-// Girls in the image as indexes (* -677)
-// Hibiki: 0
-// Tsubasa: 1
-// Chris: 2
-// Maria: 3
-// Shirabe: 4
-// Kirika: 5
+
 function Slot(canvas, image, picturePositions){
     this.image = image;
     this.canvas = canvas;
@@ -75,7 +69,8 @@ function SlotMachine(slots, canvas){
 
         for(let i = 0; i < this.slots.length; i++){
             let currentSlot = this.slots[i];
-            currentSlot.stopPosition = randomChoice(0,-677, 6);
+            // currentSlot.stopPosition = randomChoice(0,-677, 6);
+            currentSlot.stopPosition = i * -677;
             this.slotValues[(currentSlot.stopPosition / - 677)]++;
             currentSlot.displacement = 150;
             currentSlot.stop = false;
@@ -110,12 +105,23 @@ function SlotMachine(slots, canvas){
     }
 
     this.calcWinner = function() {
+        // Girls in the image as indexes (* -677)
+        // Hibiki: 0
+        // Tsubasa: 1
+        // Chris: 2
+        // Maria: 3
+        // Shirabe: 4
+        // Kirika: 5
         for (let i = 0; i < this.slotValues.length; i++) {
             let currentSlotValue = this.slotValues[i];
             if (currentSlotValue >= 2) {
                 this.slotValues = [0,0,0,0,0,0];
                 return i;
             }
+        }
+
+        if (this.slotValues[0] && this.slotValues[1]&& this.slotValues[2]) {
+            return 6; // Glorious Break
         }
 
         this.slotValues = [0,0,0,0,0,0];
@@ -168,6 +174,10 @@ function handleWinner(winInt) {
             // Play Kirika
             song.setAttribute("src", "ogg/Mikansei_Ai_Mapputatsu!.ogg");
             break;
+        case 6:
+            // RADIANT FORCE (Hibiki/Tsubasa/Chris)
+            song.setAttribute("src", "ogg/RADIANT_FORCE_off_intro.mp3");
+                break;
     }
     audio.load();
     audio.play();
