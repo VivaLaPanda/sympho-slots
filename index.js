@@ -2,7 +2,7 @@
 function Slot(canvas, image, picturePositions){
     this.image = image;
     this.canvas = canvas;
-    this.canvasContext = this.canvas.getContext("2d"); 
+    this.canvasContext = this.canvas.getContext("2d");
     this.positionOnCanvas = picturePositions;
     this.refreshIntervalId;
     this.stop = false;
@@ -69,8 +69,7 @@ function SlotMachine(slots, canvas){
 
         for(let i = 0; i < this.slots.length; i++){
             let currentSlot = this.slots[i];
-            // currentSlot.stopPosition = randomChoice(0,-677, 6);
-            currentSlot.stopPosition = i * -677;
+            currentSlot.stopPosition = randomChoice(0,-677, 6);
             this.slotValues[(currentSlot.stopPosition / - 677)]++;
             currentSlot.displacement = 150;
             currentSlot.stop = false;
