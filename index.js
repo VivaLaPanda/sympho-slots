@@ -124,6 +124,7 @@ function randomChoice(start, interval, choices){
 
 function handleWinner(winInt) {
     let audio = document.getElementById("music");
+    audio.volume = .8;
     let song = document.getElementById("music-src");
     
     switch (winInt) {
