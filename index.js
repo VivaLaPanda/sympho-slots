@@ -37,9 +37,11 @@ function startVisualizer(stream, strokeColor) {
         source.connect(analyser);
         //analyser.connect(audioCtx.destination);
     
+        let index = 0;
         draw()
     
         function draw() {
+            index++;
             if (visualizerStopped) {
                 return;
             }
@@ -54,9 +56,7 @@ function startVisualizer(stream, strokeColor) {
             visCanvasCtx.clearRect(0,0, WIDTH, HEIGHT)
         
             visCanvasCtx.lineWidth = 20;
-            visCanvasCtx.strokeStyle = strokeColor;
-            visCanvasCtx.shadowBlur = 80;
-            visCanvasCtx.shadowColor = strokeColor;
+            visCanvasCtx.strokeStyle = strokeColor(index);
         
             visCanvasCtx.beginPath();
         
@@ -96,21 +96,22 @@ function startPulse(color) {
     pulseStopped = false;
     let container = document.querySelector(".container");
 
-    function pulse(polarity) {
+    function pulse(polarity, index) {
         if (pulseStopped) {
             return;
         }
 
         if (polarity == 0) {
-            container.setAttribute("style", "background-color: " + color + ";background-blend-mode: multiply;")
+            container.setAttribute("style", "background-color: " + color(index) + ";background-blend-mode: multiply;")
+            index ++;
         } else {
             container.setAttribute("style", "background-color: rgba(200,100,0, 0);background-blend-mode: multiply;")
         }
 
-        window.setTimeout(() => pulse((polarity + 1) % 2), 384 / 4)
+        window.setTimeout(() => pulse((polarity + 1) % 2, index), 384 / 4)
     }
 
-    pulse(0);
+    pulse(0, 0);
 }
 
 function stopPulse() {
@@ -256,46 +257,47 @@ function handleWinner(slotValues, winFunc) {
     // Kirika: 5
 
     // Handle all the solo songs
+    // slotValues = [1,1,1,0,0,0];
     for (let i = 0; i < slotValues.length; i++) {
         let currentSlotValue = slotValues[i];
-        let color = "rgba(0, 0, 0, 0)";
+        let color = () => "rgba(0, 0, 0, 0)"
         if (currentSlotValue == 3) {
             switch (i) {
                 case 0:
                     // Play Hibiki
                     song.setAttribute("src", "audio/songs/Seigi_wo_Shinjite,_Nigiri_Shimete.oga");
                     holyChant.setAttribute("src", "audio/holy-chants/Gungnir_Holy_Chant_(Hibiki).oga");
-                    color = "rgb(255, 103, 0)";
+                    color = () => "rgb(255, 103, 0)"
                     break;
                 case 1:
                     // Play Tsubasa
                     song.setAttribute("src", "audio/songs/Gekkō_no_Tsurugi.oga");
                     holyChant.setAttribute("src", "audio/holy-chants/Ame_no_Habakiri_Holy_Chant.oga");
-                    color = "rgb(30, 92, 188)";
+                    color = () => "rgb(30, 92, 188)";
                     break;
                 case 2:
                     // Play Chris
                     song.setAttribute("src", "audio/songs/TRUST_HEART_(IGNITED_arrangement).oga");
                     holyChant.setAttribute("src", "audio/holy-chants/Ichaival_Holy_Chant.oga");
-                    color = "rgb(207, 5, 5)";
+                    color = () => "rgb(207, 5, 5)";
                     break;
                 case 3:
                     // Play Maria
                     song.setAttribute("src", "audio/songs/Shirogane_no_Honō_-keep_the_faith-.ogg");
                     holyChant.setAttribute("src", "audio/holy-chants/Airgetlam_Holy_Chant_(Maria).oga");
-                    color = "rgb(252, 179, 179)";
+                    color = () => "rgb(252, 179, 179)";
                     break;
                 case 4:
                     // Play Shirabe
                     song.setAttribute("src", "audio/songs/Melodious_Moonlight.oga");
                     holyChant.setAttribute("src", "audio/holy-chants/Shul_Shagana_Holy_Chant.oga");
-                    color = "rgb(241, 97, 176)";
+                    color = () => "rgb(241, 97, 176)";
                     break;
                 case 5:
                     // Play Kirika
                     song.setAttribute("src", "audio/songs/Mikansei_Ai_Mapputatsu!.ogg");
                     holyChant.setAttribute("src", "audio/holy-chants/Igalima_Holy_Chant.oga");
-                    color = "rgb(146, 230, 152)";
+                    color = () => "rgb(146, 230, 152)";
                     break;
             }
 
@@ -315,16 +317,40 @@ function handleWinner(slotValues, winFunc) {
         if (slotValues[2] + xValue == 3) {
             // Tsubasa and Chris
             song.setAttribute("src", "audio/songs/BAYONET_CHARGE.oga");
+            color = (index) => {
+                switch (index % 2) {
+                    case 0:
+                        return "rgb(30, 92, 188)"
+                    case 1:
+                        return "rgb(207, 5, 5)"
+                }
+            };
             winFunc(color);
             return true;
         } else if (slotValues[4] + xValue == 3) {
             // Tsubasa and Shirabe
             song.setAttribute("src", "audio/songs/Fūgetsu_no_Shissō.oga");
+            color = (index) => {
+                switch (index % 2) {
+                    case 0:
+                        return "rgb(30, 92, 188)"
+                    case 1:
+                        return "rgb(241, 97, 176)"
+                }
+            };
             winFunc(color);
             return true;
         } else if (slotValues[3] + xValue == 3) {
             // Tsubasa and Maria
             song.setAttribute("src", "audio/songs/Fushichou_no_Flamme.oga");
+            color = (index) => {
+                switch (index % 2) {
+                    case 0:
+                        return "rgb(30, 92, 188)"
+                    case 1:
+                        return "rgb(252, 179, 179)"
+                }
+            };
             winFunc(color);
             return true;
         }
@@ -336,6 +362,14 @@ function handleWinner(slotValues, winFunc) {
         if (slotValues[3] + xValue == 3) {
             // Chris and Maria
             song.setAttribute("src", "audio/songs/Change_the_Future.oga");
+            color = (index) => {
+                switch (index % 2) {
+                    case 0:
+                        return "rgb(207, 5, 5)"
+                    case 1:
+                        return "rgb(252, 179, 179)"
+                }
+            };
             winFunc(color);
             return true;
         }
@@ -347,6 +381,12 @@ function handleWinner(slotValues, winFunc) {
         if (slotValues[5] + xValue == 3) {
             // Shirabe and Kirika
             song.setAttribute("src", "audio/songs/Cutting-Edge×2-Ready-go.ogg");
+            switch (index % 2) {
+                case 0:
+                    return "rgb(241, 97, 176)"
+                case 1:
+                    return "rgb(146, 230, 152)"
+            }
             winFunc(color);
             return true;
         }
@@ -355,12 +395,32 @@ function handleWinner(slotValues, winFunc) {
     // Truets? Songs with 3 symphogears
     if (slotValues[0] && slotValues[1]&& slotValues[2]) {
         song.setAttribute("src", "audio/songs/RADIANT_FORCE_off_intro.mp3");
+            color = (index) => {
+                switch (index % 3) {
+                    case 0:
+                        return "rgb(255, 103, 0)"
+                    case 1:
+                        return "rgb(30, 92, 188)"
+                    case 2:
+                        return "rgb(207, 5, 5)"
+                }
+            };
             winFunc(color);
             return true;
     }
 
     if (slotValues[3] && slotValues[4]&& slotValues[5]) {
         song.setAttribute("src", "audio/songs/Senritsu_Sorority.oga");
+        color = (index) => {
+            switch (index % 3) {
+                case 0:
+                    return "rgb(252, 179, 179)"
+                case 1:
+                    return "rgb(241, 97, 176)"
+                case 2:
+                    return "rgb(146, 230, 152)"
+            }
+        };
             winFunc(color);
             return true;
     }
