@@ -8,6 +8,7 @@
 <body>
     <div class="container" >
         <img id="logo" src="img/logo.png"></img>
+        <canvas class="visualizer" height="300px" width="1000"></canvas>
         <div class="row">
             <div class="item">
                 <canvas id="slots" width="900" height="677">
@@ -19,7 +20,7 @@
         </div>
     </div>
     <audio id="music">
-        <source id="music-src" type="audio/ogg">
+        <source id="music-src" crossOrigin="anonymous" type="audio/ogg">
         Your browser does not support the audio element.
     </audio>
     <audio id="holy-chant">
