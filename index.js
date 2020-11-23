@@ -1,17 +1,15 @@
 let tokenList = [0, 0, 0, 0, 0, 0];
 
+const charaLookup = {
+    0: "hibiki",
+    1: "tsubasa",
+    2: "chris",
+    3: "maria",
+    4: "shirabe",
+    5: "kirika"
+}
+
 function genericWin() {
-    let smallWinAudio = document.getElementById("smallwin");
-    smallWinAudio.play();
-
-    let audio = document.getElementById("music");
-    audio.volume = .8;
-    audio.load();
-    audio.play();
-    audio.onended = function() {
-        StopAndReset();
-    }
-
     for (let i = 0; i < tokenList.length; i++) {
         if (tokenList[i] > 3) {
             tokenList[i] = 3;
@@ -27,8 +25,33 @@ function genericWin() {
                 token.classList.add("glowing");
                 let tokenLink = document.querySelector("#tokens-" + i + " a");
                 tokenLink.onclick = function() {
+                    // Set sprites
                     let tokenStackDom = document.querySelector("#tokens-" + i);
                     tokenStackDom.setAttribute("style", "display: none;");
+
+                    let sprite = document.querySelector("#sprite-" + i);
+                    sprite.setAttribute("src", sprite.getAttribute("src").replace("-grey", ""));
+
+                    // Stop anything playing
+                    StopAndReset();
+
+                    // Play chant
+                    playChant(i);
+                    let chantAudio = document.getElementById("holy-chant");
+
+                    // Play video after chant
+                    chantAudio.onended = function() {
+                        let videobox = document.querySelector("#videobox");
+                        videobox.setAttribute("style", "display: flex;");
+                        let video = document.querySelector("#videobox video");
+                        video.setAttribute("src", "video/transforms/" + charaLookup[i] + ".mp4");
+                        video.load();
+                        video.play();
+                        video.onended = function() {
+                            videobox.setAttribute("style", "display: none;");
+                            playSolo(i);
+                        }
+                    }
                 }
             }
         }
@@ -42,10 +65,19 @@ function solidToTransparent(colorString, opacity) {
     return colorString;
 }
 
-function handleWinner(slotValues) {
+function playSong() {
+    let audio = document.getElementById("music");
+    audio.volume = .8;
+    audio.load();
+    audio.play();
+    audio.onended = function() {
+        StopAndReset();
+    }
+}
+
+function playChant(charInt) {
     // Setup
-    let song = document.getElementById("music-src");
-    let holyChant = document.getElementById("holy-chant-src");
+    const holyChant = document.getElementById("holy-chant-src");
 
     // Girls in the image as indexes (* -677)
     // Hibiki: 0
@@ -54,116 +86,154 @@ function handleWinner(slotValues) {
     // Maria: 3
     // Shirabe: 4
     // Kirika: 5
+    switch (charInt) {
+        case 0:
+            // Play Hibiki
+            holyChant.setAttribute("src", "audio/holy-chants/Gungnir_Holy_Chant_(Hibiki).oga");
+            break;
+        case 1:
+            // Play Tsubasa
+            holyChant.setAttribute("src", "audio/holy-chants/Ame_no_Habakiri_Holy_Chant.oga");
+            break;
+        case 2:
+            // Play Chris
+            holyChant.setAttribute("src", "audio/holy-chants/Ichaival_Holy_Chant.oga");
+        case 3:
+            // Play Maria
+            holyChant.setAttribute("src", "audio/holy-chants/Airgetlam_Holy_Chant_(Maria).oga");
+            break;
+        case 4:
+            // Play Shirabe
+            holyChant.setAttribute("src", "audio/holy-chants/Shul_Shagana_Holy_Chant.oga");
+            break;
+        case 5:
+            // Play Kirika
+            holyChant.setAttribute("src", "audio/holy-chants/Igalima_Holy_Chant.oga");
+            break;
+    }
 
+    let chantAudio = document.getElementById("holy-chant");
+    chantAudio.volume = .8;
+    chantAudio.load();
+    chantAudio.play();
+}
+
+function playSolo(charInt) {
+    let chant = false;
+    
+    // Setup
+    const song = document.getElementById("music-src");
+    const holyChant = document.getElementById("holy-chant-src");
+
+    // Girls in the image as indexes (* -677)
+    // Hibiki: 0
+    // Tsubasa: 1
+    // Chris: 2
+    // Maria: 3
+    // Shirabe: 4
+    // Kirika: 5
+    switch (charInt) {
+        case 0:
+            // Play Hibiki
+            song.setAttribute("src", "audio/songs/Seigi_wo_Shinjite,_Nigiri_Shimete.oga");
+            color = () => "rgb(255, 103, 0)";
+            bgColor = (index) => {
+                switch (index % 2) {
+                    case 0:
+                        return "rgba(255, 103, 0, .8)";
+                    case 1:
+                        return "rgba(255, 103, 0, 0)";
+                }
+            };
+            break;
+        case 1:
+            // Play Tsubasa
+            song.setAttribute("src", "audio/songs/Gekkō_no_Tsurugi.oga");
+            color = () => "rgb(30, 92, 188)";
+            bgColor = (index) => {
+                switch (index % 2) {
+                    case 0:
+                        return "rgba(30, 92, 188, .8)";
+                    case 1:
+                        return "rgba(30, 92, 188, 0)";
+                }
+            };
+            break;
+        case 2:
+            // Play Chris
+            song.setAttribute("src", "audio/songs/chris.ogg");
+            color = () => "rgb(207, 5, 5)";
+            bgColor = (index) => {
+                switch (index % 2) {
+                    case 0:
+                        return "rgba(207, 5, 5, .8)";
+                    case 1:
+                        return "rgba(207, 5, 5, 0)";
+                }
+            };
+            break;
+        case 3:
+            // Play Maria
+            song.setAttribute("src", "audio/songs/Shirogane_no_Honō_-keep_the_faith-.ogg");
+            color = () => "rgb(252, 179, 179)";
+            bgColor = (index) => {
+                switch (index % 2) {
+                    case 0:
+                        return "rgba(252, 179, 179, .8)";
+                    case 1:
+                        return "rgba(252, 179, 179, 0)";
+                }
+            };
+            break;
+        case 4:
+            // Play Shirabe
+            song.setAttribute("src", "audio/songs/Melodious_Moonlight.oga");
+            color = () => "rgb(241, 97, 176)";
+            bgColor = (index) => {
+                switch (index % 2) {
+                    case 0:
+                        return "rgba(241, 97, 176, .8)";
+                    case 1:
+                        return "rgba(241, 97, 176, 0)";
+                }
+            };
+            break;
+        case 5:
+            // Play Kirika
+            song.setAttribute("src", "audio/songs/Mikansei_Ai_Mapputatsu!.ogg");
+            color = () => "rgb(146, 230, 152)";
+            bgColor = (index) => {
+                switch (index % 2) {
+                    case 0:
+                        return "rgba(146, 230, 152, .8)";
+                    case 1:
+                        return "rgba(146, 230, 152, 0)";
+                }
+            };
+            break;
+    }
+
+    playSong();
+
+    window.setTimeout(()=>{
+        audio = document.getElementById("music");
+        startVisualizer(audio.captureStream(), color);
+        startPulse(bgColor);
+    }, 1000);
+}
+
+function handleWinner(slotValues) {
     // Handle all the solo songs
     // slotValues = [0,0,0,1,1,1];
     for (let i = 0; i < slotValues.length; i++) {
         let currentSlotValue = slotValues[i];
-        let color = () => "rgba(0, 0, 0, 0)"
         if (currentSlotValue == 3) {
             tokenList[i] += 3;
-            switch (i) {
-                case 0:
-                    // Play Hibiki
-                    song.setAttribute("src", "audio/songs/Seigi_wo_Shinjite,_Nigiri_Shimete.oga");
-                    holyChant.setAttribute("src", "audio/holy-chants/Gungnir_Holy_Chant_(Hibiki).oga");
-                    color = () => "rgb(255, 103, 0)";
-                    bgColor = (index) => {
-                        switch (index % 2) {
-                            case 0:
-                                return "rgba(255, 103, 0, .8)";
-                            case 1:
-                                return "rgba(255, 103, 0, 0)";
-                        }
-                    };
-                    break;
-                case 1:
-                    // Play Tsubasa
-                    song.setAttribute("src", "audio/songs/Gekkō_no_Tsurugi.oga");
-                    holyChant.setAttribute("src", "audio/holy-chants/Ame_no_Habakiri_Holy_Chant.oga");
-                    color = () => "rgb(30, 92, 188)";
-                    bgColor = (index) => {
-                        switch (index % 2) {
-                            case 0:
-                                return "rgba(30, 92, 188, .8)";
-                            case 1:
-                                return "rgba(30, 92, 188, 0)";
-                        }
-                    };
-                    break;
-                case 2:
-                    // Play Chris
-                    song.setAttribute("src", "audio/songs/TRUST_HEART_(IGNITED_arrangement).oga");
-                    holyChant.setAttribute("src", "audio/holy-chants/Ichaival_Holy_Chant.oga");
-                    color = () => "rgb(207, 5, 5)";
-                    bgColor = (index) => {
-                        switch (index % 2) {
-                            case 0:
-                                return "rgba(207, 5, 5, .8)";
-                            case 1:
-                                return "rgba(207, 5, 5, 0)";
-                        }
-                    };
-                    break;
-                case 3:
-                    // Play Maria
-                    song.setAttribute("src", "audio/songs/Shirogane_no_Honō_-keep_the_faith-.ogg");
-                    holyChant.setAttribute("src", "audio/holy-chants/Airgetlam_Holy_Chant_(Maria).oga");
-                    color = () => "rgb(252, 179, 179)";
-                    bgColor = (index) => {
-                        switch (index % 2) {
-                            case 0:
-                                return "rgba(252, 179, 179, .8)";
-                            case 1:
-                                return "rgba(252, 179, 179, 0)";
-                        }
-                    };
-                    break;
-                case 4:
-                    // Play Shirabe
-                    song.setAttribute("src", "audio/songs/Melodious_Moonlight.oga");
-                    holyChant.setAttribute("src", "audio/holy-chants/Shul_Shagana_Holy_Chant.oga");
-                    color = () => "rgb(241, 97, 176)";
-                    bgColor = (index) => {
-                        switch (index % 2) {
-                            case 0:
-                                return "rgba(241, 97, 176, .8)";
-                            case 1:
-                                return "rgba(241, 97, 176, 0)";
-                        }
-                    };
-                    break;
-                case 5:
-                    // Play Kirika
-                    song.setAttribute("src", "audio/songs/Mikansei_Ai_Mapputatsu!.ogg");
-                    holyChant.setAttribute("src", "audio/holy-chants/Igalima_Holy_Chant.oga");
-                    color = () => "rgb(146, 230, 152)";
-                    bgColor = (index) => {
-                        switch (index % 2) {
-                            case 0:
-                                return "rgba(146, 230, 152, .8)";
-                            case 1:
-                                return "rgba(146, 230, 152, 0)";
-                        }
-                    };
-                    break;
-            }
 
-            let chantAudio = document.getElementById("holy-chant");
-            chantAudio.volume = .8;
-            chantAudio.load();
-            chantAudio.play();
+            let smallWinAudio = document.getElementById("smallwin");
+            smallWinAudio.play();
 
-            window.setTimeout(()=>{
-                genericWin();
-
-                window.setTimeout(()=>{
-                    audio = document.getElementById("music");
-                    startVisualizer(audio.captureStream(), color);
-                    startPulse(bgColor);
-                }, 1000);
-            }, 10000); // Delay playing the music until after the chant
-
+            genericWin();
             return true;
         }
     }
@@ -284,30 +354,36 @@ function handleWinner(slotValues) {
 
     // Truets? Songs with 3 symphogears
     if (slotValues[0] && slotValues[1]&& slotValues[2]) {
+        tokenList[0]++;
+        tokenList[1]++;
+        tokenList[2]++;
         song.setAttribute("src", "audio/songs/RADIANT_FORCE_off_intro.mp3");
-            color = (index) => {
-                switch (index % 3) {
-                    case 0:
-                        return "rgb(255, 103, 0)"
-                    case 1:
-                        return "rgb(30, 92, 188)"
-                    case 2:
-                        return "rgb(207, 5, 5)"
-                }
-            };
-            bgColor = (index) => {
-                return solidToTransparent(color(index), .8)
-            };
-            genericWin();
-            window.setTimeout(()=>{
-                audio = document.getElementById("music");
-                startVisualizer(audio.captureStream(), color);
-                startPulse(bgColor);
-            }, 1000);
-            return true;
+        color = (index) => {
+            switch (index % 3) {
+                case 0:
+                    return "rgb(255, 103, 0)"
+                case 1:
+                    return "rgb(30, 92, 188)"
+                case 2:
+                    return "rgb(207, 5, 5)"
+            }
+        };
+        bgColor = (index) => {
+            return solidToTransparent(color(index), .8)
+        };
+        genericWin();
+        window.setTimeout(()=>{
+            audio = document.getElementById("music");
+            startVisualizer(audio.captureStream(), color);
+            startPulse(bgColor);
+        }, 1000);
+        return true;
     }
 
     if (slotValues[3] && slotValues[4]&& slotValues[5]) {
+        tokenList[3]++;
+        tokenList[4]++;
+        tokenList[5]++;
         song.setAttribute("src", "audio/songs/Senritsu_Sorority.oga");
         color = (index) => {
             switch (index % 3) {
