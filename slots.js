@@ -38,7 +38,7 @@ function Slot(canvas, image, picturePositions){
 }
 
 let cheatMode = false;
-cheatMode = [1, 1, 1];
+// cheatMode = [1, 1, 1];
 // Girls in the image as indexes (* -677)
 // Hibiki: 0
 // Tsubasa: 1
