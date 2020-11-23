@@ -2,20 +2,62 @@
 <head>
     <meta charset="utf-8">
     <title>Symphogear Slots</title>
+    <script charset="utf-8" src="slots.js"></script>
+    <script charset="utf-8" src="visuals.js"></script>
     <script charset="utf-8" src="index.js"></script>
     <link rel="stylesheet" href="index.css" type="text/css" media="screen" title="no title" charset="utf-8">
 </head>
 <body>
     <div class="container" >
-        <img id="logo" src="img/logo.png"></img>
-        <canvas class="visualizer" height="300px" width="1000"></canvas>
         <div class="row">
+            <img id="logo" src="img/logo.png"></img>
+        </div>
+        <canvas id="visualizer" class="on-top" height="300px" width="1000"></canvas>
+        <div class="row" style="width: min(99vw, 2160px);">
             <div class="item">
                 <canvas id="slots" width="900" height="677">
                 </canvas>
             </div>
-            <div class="item" style="margin-left: 0px;">
-                <input type="image" id="start" alt="Spin" src="img/converter.png">
+            <div class="column" style="margin-left: 0px;">
+                <div class="item">
+                    <input type="image" id="start" alt="Spin" src="img/converter.png">
+                </div>
+                <div id="tokenbox" class="column">
+                    <div class="row">
+                        <div id="tokens-0" class="tokenstack">
+                            <img class="token-0" src="img/hibiki-token.png"/>
+                            <img class="token-1" src="img/hibiki-token.png"/>
+                            <a href="#"><img class="token-2" src="img/hibiki-token.png"/></a>
+                        </div>
+                        <div id="tokens-1" class="tokenstack">
+                            <img class="token-0" src="img/tsubasa-token.png"/>
+                            <img class="token-1" src="img/tsubasa-token.png"/>
+                            <a href="#"><img class="token-2" src="img/tsubasa-token.png"/></a>
+                        </div>
+                        <div id="tokens-2" class="tokenstack">
+                            <img class="token-0" src="img/chris-token.png"/>
+                            <img class="token-1" src="img/chris-token.png"/>
+                            <a href="#"><img class="token-2" src="img/chris-token.png"/></a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="tokens-3" class="tokenstack">
+                            <img class="token-0" src="img/maria-token.png"/>
+                            <img class="token-1" src="img/maria-token.png"/>
+                            <a href="#"><img class="token-2" src="img/maria-token.png"/></a>
+                        </div>
+                        <div id="tokens-4" class="tokenstack">
+                            <img class="token-0" src="img/shirabe-token.png"/>
+                            <img class="token-1" src="img/shirabe-token.png"/>
+                            <a href="#"><img class="token-2" src="img/shirabe-token.png"/></a>
+                        </div>
+                        <div id="tokens-5" class="tokenstack">
+                            <img class="token-0" src="img/kirika-token.png"/>
+                            <img class="token-1" src="img/kirika-token.png"/>
+                            <a href="#"><img class="token-2" src="img/kirika-token.png"/></a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
