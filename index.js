@@ -119,11 +119,8 @@ function playChant(charInt) {
 }
 
 function playSolo(charInt) {
-    let chant = false;
-    
     // Setup
     const song = document.getElementById("music-src");
-    const holyChant = document.getElementById("holy-chant-src");
 
     // Girls in the image as indexes (* -677)
     // Hibiki: 0
@@ -223,6 +220,9 @@ function playSolo(charInt) {
 }
 
 function handleWinner(slotValues) {
+    // Setup
+    const song = document.getElementById("music-src");
+    
     // Handle all the solo songs
     // slotValues = [0,0,0,1,1,1];
     for (let i = 0; i < slotValues.length; i++) {
