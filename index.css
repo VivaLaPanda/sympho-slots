@@ -102,6 +102,16 @@ html, body{
     }
 }
 
+#redeem-token {
+    filter: grayscale();
+    width: 50%;
+    padding-top: 50px;
+}
+
+#redeem-token img {
+    width: 100%;
+}
+
 #logo {
     width:335px;
     height: 155px;
@@ -130,6 +140,8 @@ html, body{
 .row {
     display: flex;
     flex-direction: row;
+    align-content: center;
+    justify-content: center;
     margin-left: auto;
     margin-right: auto;
 }

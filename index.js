@@ -1,4 +1,5 @@
 let tokenList = [0, 0, 0, 0, 0, 0];
+let selectedTokens = {};
 
 const charaLookup = {
     0: "hibiki",
@@ -10,6 +11,8 @@ const charaLookup = {
 }
 
 function genericWin() {
+    var redeemButton = document.getElementById('redeem-token');
+
     for (let i = 0; i < tokenList.length; i++) {
         if (tokenList[i] > 3) {
             tokenList[i] = 3;
@@ -21,38 +24,59 @@ function genericWin() {
             token.setAttribute("style", "filter: none;");
 
             if (j == 2) {
-                // Stack is complete
-                token.classList.add("glowing");
                 let tokenLink = document.querySelector("#tokens-" + i + " a");
                 tokenLink.onclick = function() {
-                    // Set sprites
-                    let tokenStackDom = document.querySelector("#tokens-" + i);
-                    tokenStackDom.setAttribute("style", "display: none;");
-
-                    let sprite = document.querySelector("#sprite-" + i);
-                    sprite.setAttribute("src", sprite.getAttribute("src").replace("-grey", ""));
-
-                    // Stop anything playing
-                    StopAndReset();
-
-                    // Play chant
-                    playChant(i);
-                    let chantAudio = document.getElementById("holy-chant");
-
-                    // Play video after chant
-                    chantAudio.onended = function() {
-                        let videobox = document.querySelector("#videobox");
-                        videobox.setAttribute("style", "display: flex;");
-                        let video = document.querySelector("#videobox video");
-                        video.setAttribute("src", "video/transforms/" + charaLookup[i] + ".mp4");
-                        video.load();
-                        video.play();
-                        video.onended = function() {
-                            videobox.setAttribute("style", "display: none;");
-                            playSolo(i);
-                        }
+                    // Stack is complete
+                    if (!selectedTokens[i]) {
+                        selectedTokens[i] = true;
+                        token.classList.add("glowing");
+                        redeemButton.setAttribute("style", "filter: none;");
+                    } else {
+                        delete selectedTokens[i];
+                        token.classList.remove("glowing");
+                        redeemButton.setAttribute("style", "filter: greyscale();");
                     }
                 }
+            }
+        }
+    }
+}
+
+function redeemTokens() {
+    if (selectedTokens.length == 0) {
+        return;
+    }
+
+    for (token in selectedTokens) {
+        // Set sprites
+        let tokenStackDom = document.querySelector("#tokens-" + token);
+        tokenStackDom.setAttribute("style", "display: none;");
+
+        let sprite = document.querySelector("#sprite-" + token);
+        sprite.setAttribute("src", sprite.getAttribute("src").replace("-grey", ""));
+    }
+
+    // TODO AHHH WE NEED TO MAKE SURE THAT WE PLAY THE RIGHT SONG BASED ON THE TOKEN
+
+    if (selectedTokens.length == 1) {
+        // Stop anything playing
+        StopAndReset();
+
+        // Play chant
+        playChant(i);
+        let chantAudio = document.getElementById("holy-chant");
+
+        // Play video after chant
+        chantAudio.onended = function() {
+            let videobox = document.querySelector("#videobox");
+            videobox.setAttribute("style", "display: flex;");
+            let video = document.querySelector("#videobox video");
+            video.setAttribute("src", "video/transforms/" + charaLookup[i] + ".mp4");
+            video.load();
+            video.play();
+            video.onended = function() {
+                videobox.setAttribute("style", "display: none;");
+                playSolo(i);
             }
         }
     }
@@ -222,7 +246,7 @@ function playSolo(charInt) {
 function handleWinner(slotValues) {
     // Setup
     const song = document.getElementById("music-src");
-    
+
     // Handle all the solo songs
     // slotValues = [0,0,0,1,1,1];
     for (let i = 0; i < slotValues.length; i++) {
@@ -454,6 +478,11 @@ function init(){
             }, 2350);
         }, 1900);
     });
+
+    var redeemButton = document.getElementById('redeem-token');
+    redeemButton.addEventListener('click', function() {
+        redeemTokens();
+    })
 }
 
 
