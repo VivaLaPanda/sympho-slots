@@ -1,5 +1,5 @@
 let tokenList = [0, 0, 0, 0, 0, 0];
-let selectedTokens = {};
+let selectedToken = -1;
 
 const charaLookup = {
     0: "hibiki",
@@ -27,12 +27,12 @@ function genericWin() {
                 let tokenLink = document.querySelector("#tokens-" + i + " a");
                 tokenLink.onclick = function() {
                     // Stack is complete
-                    if (!selectedTokens[i]) {
-                        selectedTokens[i] = true;
+                    if (selectedToken == -1) {
+                        selectedToken = i;
                         token.classList.add("glowing");
                         redeemButton.setAttribute("style", "filter: none;");
                     } else {
-                        delete selectedTokens[i];
+                        selectedToken = -1;
                         token.classList.remove("glowing");
                         redeemButton.setAttribute("style", "filter: greyscale();");
                     }
@@ -43,41 +43,39 @@ function genericWin() {
 }
 
 function redeemTokens() {
-    if (selectedTokens.length == 0) {
+    if (selectedToken == -1) {
         return;
     }
+    
+    document.getElementById('redeem-token').setAttribute("style", "filter: greyscale();");
 
-    for (token in selectedTokens) {
-        // Set sprites
-        let tokenStackDom = document.querySelector("#tokens-" + token);
-        tokenStackDom.setAttribute("style", "display: none;");
+    // Set sprites
+    let tokenStackDom = document.querySelector("#tokens-" + selectedToken);
+    tokenStackDom.setAttribute("style", "display: none;");
 
-        let sprite = document.querySelector("#sprite-" + token);
-        sprite.setAttribute("src", sprite.getAttribute("src").replace("-grey", ""));
-    }
+    let sprite = document.querySelector("#sprite-" + selectedToken);
+    sprite.setAttribute("src", sprite.getAttribute("src").replace("-grey", ""));
 
     // TODO AHHH WE NEED TO MAKE SURE THAT WE PLAY THE RIGHT SONG BASED ON THE TOKEN
+    // Stop anything playing
+    StopAndReset();
 
-    if (selectedTokens.length == 1) {
-        // Stop anything playing
-        StopAndReset();
+    // Play chant
+    playChant(selectedToken);
+    let chantAudio = document.getElementById("holy-chant");
 
-        // Play chant
-        playChant(i);
-        let chantAudio = document.getElementById("holy-chant");
-
-        // Play video after chant
-        chantAudio.onended = function() {
-            let videobox = document.querySelector("#videobox");
-            videobox.setAttribute("style", "display: flex;");
-            let video = document.querySelector("#videobox video");
-            video.setAttribute("src", "video/transforms/" + charaLookup[i] + ".mp4");
-            video.load();
-            video.play();
-            video.onended = function() {
-                videobox.setAttribute("style", "display: none;");
-                playSolo(i);
-            }
+    // Play video after chant
+    chantAudio.onended = function() {
+        let videobox = document.querySelector("#videobox");
+        videobox.setAttribute("style", "display: flex;");
+        let video = document.querySelector("#videobox video");
+        video.setAttribute("src", "video/transforms/" + charaLookup[selectedToken] + ".mp4");
+        video.load();
+        video.play();
+        video.onended = function() {
+            videobox.setAttribute("style", "display: none;");
+            playSolo(selectedToken);
+            selectedToken = -1; // Unselect the token
         }
     }
 }
@@ -280,6 +278,7 @@ function handleWinner(slotValues) {
             };
 
             genericWin();
+         playSong();
             window.setTimeout(()=>{
                 audio = document.getElementById("music");
                 startVisualizer(audio.captureStream(), color);
@@ -299,6 +298,7 @@ function handleWinner(slotValues) {
                 }
             };
             genericWin();
+         playSong();
             window.setTimeout(()=>{
                 audio = document.getElementById("music");
                 startVisualizer(audio.captureStream(), color);
@@ -318,6 +318,7 @@ function handleWinner(slotValues) {
                 }
             };
             genericWin();
+         playSong();
             window.setTimeout(()=>{
                 audio = document.getElementById("music");
                 startVisualizer(audio.captureStream(), color);
@@ -343,6 +344,7 @@ function handleWinner(slotValues) {
                 }
             };
             genericWin();
+         playSong();
             window.setTimeout(()=>{
                 audio = document.getElementById("music");
                 startVisualizer(audio.captureStream(), color);
@@ -368,6 +370,7 @@ function handleWinner(slotValues) {
                 }
             }
             genericWin();
+         playSong();
             window.setTimeout(()=>{
                 audio = document.getElementById("music");
                 startVisualizer(audio.captureStream(), color);
@@ -396,6 +399,7 @@ function handleWinner(slotValues) {
             return solidToTransparent(color(index), .8)
         };
         genericWin();
+         playSong();
         window.setTimeout(()=>{
             audio = document.getElementById("music");
             startVisualizer(audio.captureStream(), color);
@@ -423,6 +427,7 @@ function handleWinner(slotValues) {
             return solidToTransparent(color(index), .8)
         };
         genericWin();
+         playSong();
         window.setTimeout(()=>{
             audio = document.getElementById("music");
             startVisualizer(audio.captureStream(), color);
@@ -490,3 +495,4 @@ function init(){
 window.onload = function(){
     init();
 }
+
